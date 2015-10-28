@@ -102,23 +102,21 @@ class Pion(Piece):
         # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
         # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
         # puisque la documentation est déjà ci-haut, dans la classe mère.
-
-        if self.couleur == 'noir':
-            if position_source[1] == '7':
-                if position_source[0] == position_cible[0] and \
-                        (int(position_cible[1]) == int(position_source[1]) - 2 or int(position_cible[1]) == int(position_source[1]) - 1):
-                    return True
+        if position_source[0] == position_cible[0]:
+            if self.couleur == 'noir':
+                if position_source[1] == '7':
+                    if int(position_cible[1]) == int(position_source[1]) - 2 or int(position_cible[1]) == int(position_source[1]) - 1:
+                        return True
+                else:
+                    if int(position_cible[1]) == int(position_source[1]) - 1:
+                        return True
             else:
-                if position_source[0] == position_cible[0] and int(position_cible[1]) == int(position_source[1]) - 1:
-                    return True
-        else:
-            if position_source[1] == '2':
-                if position_source[0] == position_cible[0] and \
-                        (int(position_cible[1]) == int(position_source[1]) + 2 or int(position_cible[1]) == int(position_source[1]) + 1):
-                    return True
-            else:
-                if position_source[0] == position_cible[0] and int(position_cible[1]) == int(position_source[1]) + 1:
-                    return True
+                if position_source[1] == '2':
+                    if int(position_cible[1]) == int(position_source[1]) + 2 or int(position_cible[1]) == int(position_source[1]) + 1:
+                        return True
+                else:
+                    if int(position_cible[1]) == int(position_source[1]) + 1:
+                        return True
 
         return False
 
