@@ -96,11 +96,24 @@ class Echiquier:
             list: Une liste des rangées (en str) entre le début et la fin, dans le bon ordre.
 
         """
-        if rangee_debut not in self.chiffres_rangees and rangee_fin not in self.chiffres_rangees:
-            return []
+        assert rangee_debut in self.chiffres_rangees and rangee_fin in self.chiffres_rangees, "Index de rangée invalide"
+        position_debut = 0
+        position_fin = 0
+        rangees_entre = []
+        for i, r in enumerate(self.chiffres_rangees):
+            if r == rangee_debut:
+                position_debut = i
+            if r == rangee_fin:
+                position_fin = i
 
-        step = int((int(rangee_fin)-int(rangee_debut))/abs(int(rangee_fin)-int(rangee_debut)))
-        return list(range(int(rangee_debut)+1, int(rangee_fin), step))
+        if position_debut < position_fin:
+            for index in range(position_debut + 1, position_fin):
+                rangees_entre += [self.chiffres_rangees[index]]
+        elif position_debut > position_fin:
+            for index in range(position_fin + 1, position_debut):
+                rangees_entre += [self.chiffres_rangees[index]]
+
+        return rangees_entre
 
     def colonnes_entre(self, colonne_debut, colonne_fin):
         """Retourne la liste des colonnes qui sont situées entre les deux colonnes reçues en argument, exclusivement.
