@@ -89,9 +89,8 @@ class Partie:
         Une fois la partie terminée, on félicite le joueur gagnant!
 
         """
-        print(self.echiquier.colonnes_entre('d', 'b'))
         print(self.echiquier)
-
+        print(self.echiquier.colonnes_entre('c','b'))
         while not self.partie_terminee():
             print("C'est au tour des", self.joueur_actif)
             position_piece, position_cible = self.demander_positions()

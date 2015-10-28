@@ -110,7 +110,7 @@ class Echiquier:
             for index in range(position_debut + 1, position_fin):
                 rangees_entre += [self.chiffres_rangees[index]]
         elif position_debut > position_fin:
-            for index in range(position_debut + 1, position_fin, -1):
+            for index in range(position_debut - 1, position_fin, -1):
                 rangees_entre += [self.chiffres_rangees[index]]
 
         return rangees_entre
@@ -149,13 +149,11 @@ class Echiquier:
                 position_debut = i
             if r == colonne_fin:
                 position_fin = i
-        print(position_debut, position_fin)
         if position_debut < position_fin:
             for index in range(position_debut + 1, position_fin):
                 colonne_entre += [self.lettres_colonnes[index]]
         elif position_debut > position_fin:
-            for index in range(position_debut + 1, position_fin, -1):
-                print(index)
+            for index in range(position_debut -1, position_fin, -1):
                 colonne_entre += [self.lettres_colonnes[index]]
 
         return colonne_entre
