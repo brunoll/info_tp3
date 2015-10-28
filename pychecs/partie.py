@@ -89,6 +89,7 @@ class Partie:
         Une fois la partie terminée, on félicite le joueur gagnant!
 
         """
+        print(self.echiquier.colonnes_entre('d', 'b'))
         print(self.echiquier)
 
         while not self.partie_terminee():
