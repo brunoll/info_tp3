@@ -32,7 +32,10 @@ class Partie:
                 joueur n'a encore gagné.
 
         """
-        # TODO: À compléter.
+        if not self.echiquier.roi_de_couleur_est_dans_echiquier('noir'):
+            return 'noir'
+        if not self.echiquier.roi_de_couleur_est_dans_echiquier('blanc'):
+            return 'blanc'
         return 'aucun'
 
     def partie_terminee(self):
@@ -54,14 +57,26 @@ class Partie:
             str, str: Deux chaînes de caractères représentant les deux positions valides fournies par l'utilisateurs.
 
         """
-        # TODO: À compléter.
-        return 'a1', 'a1'
+        while True:
+            piece_position = input("Quelle pièce voulez-vous déplacer?")
+            if self.echiquier.position_est_valide(piece_position) and \
+                            piece_position in self.echiquier.dictionnaire_pieces and\
+                            self.echiquier.couleur_piece_a_position(piece_position) == self.joueur_actif:
+                position_cible = input("Vers où?")
+                break
+            else:
+                print("Vous n'avez pas de pièces à cette position")
+        return piece_position, position_cible
 
     def joueur_suivant(self):
         """Change le joueur actif: passe de blanc à noir, ou de noir à blanc, selon la couleur du joueur actif.
 
         """
-        # TODO: À compléter.
+        if self.joueur_actif == "blanc":
+            self.joueur_actif = "noir"
+        else:
+            self.joueur_actif = "blanc"
+
         pass
 
     def jouer(self):
@@ -74,5 +89,16 @@ class Partie:
         Une fois la partie terminée, on félicite le joueur gagnant!
 
         """
-        # TODO: À compléter.
+        print(self.echiquier)
+
+        while not self.partie_terminee():
+            print("C'est au tour des", self.joueur_actif)
+            position_piece, position_cible = self.demander_positions()
+            deplacement, erreur = self.echiquier.deplacer(position_piece, position_cible)
+            if deplacement:
+                self.joueur_suivant()
+                print(self.echiquier)
+            else:
+                print(erreur)
+
         pass

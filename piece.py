@@ -45,8 +45,7 @@ class Piece:
             bool: True si la pièce est noire, et False autrement.
 
         """
-        # TODO: À compléter.
-        return False
+        return self.couleur == 'noir'
 
     def peut_se_deplacer_vers(self, position_source, position_cible):
         """Vérifie si, selon les règles du jeu d'échecs, la pièce peut se déplacer d'une position à une autre.
@@ -103,11 +102,21 @@ class Pion(Piece):
         # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
         # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
         # puisque la documentation est déjà ci-haut, dans la classe mère.
+        if self.couleur == 'noir':
+            if position_source[0] == position_cible[0] and int(position_cible[1]) == int(position_source[1]) - 1:
+                return True
+        else:
+            if position_source[0] == position_cible[0] and int(position_cible[1]) == int(position_source[1]) + 1:
+                return True
+
         return False
 
     def peut_faire_une_prise_vers(self, position_source, position_cible):
-        # TODO: À compléter, pour définir comment un pion mange une pièce adverse.
-        return False
+        if self.couleur == 'noir':
+            return abs(ord(position_source[0]) - ord(position_cible[0])) == 1 and int(position_cible[1]) == int(position_source[1]) - 1
+        else:
+            return abs(ord(position_source[0]) - ord(position_cible[0])) == 1 and int(position_cible[1]) == int(position_source[1]) + 1
+
 
     def __repr__(self):
         """Redéfinit comment on affiche un pion à l'écran. Nous utilisons la constante UTILISER_UNICODE
@@ -144,7 +153,11 @@ class Tour(Piece):
                 return '\u265c'
             else:
                 return 'TN'
-
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
+        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
+        # puisque la documentation est déjà ci-haut, dans la classe mère.
+        return abs(ord(position_source[0]) - ord(position_cible[0])) == 0 or abs(ord(position_source[1]) - ord(position_cible[1])) == 0
 
 class Cavalier(Piece):
     def __init__(self, couleur):
@@ -161,6 +174,12 @@ class Cavalier(Piece):
                 return '\u265e'
             else:
                 return 'CN'
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
+        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
+        # puisque la documentation est déjà ci-haut, dans la classe mère.
+        return (abs(ord(position_cible[0])-ord(position_source[0])) == 2 and abs(int(position_cible[1])-int(position_source[1])) == 1) or\
+               (abs(ord(position_cible[0])-ord(position_source[0])) == 1 and abs(int(position_cible[1])-int(position_source[1])) == 2)
 
 
 class Fou(Piece):
@@ -178,6 +197,11 @@ class Fou(Piece):
                 return '\u265d'
             else:
                 return 'FN'
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
+        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
+        # puisque la documentation est déjà ci-haut, dans la classe mère.
+        return abs(ord(position_source[0]) - ord(position_cible[0])) == abs(int(position_source[1]) - int(position_cible[1]))
 
 
 class Roi(Piece):
@@ -195,6 +219,11 @@ class Roi(Piece):
                 return '\u265a'
             else:
                 return 'RN'
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
+        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
+        # puisque la documentation est déjà ci-haut, dans la classe mère.
+        return abs(ord(position_cible[0])-ord(position_source[0])) <= 1 and abs(int(position_cible[1])-int(position_source[1])) <= 1
 
 
 class Dame(Piece):
@@ -212,3 +241,9 @@ class Dame(Piece):
                 return '\u265b'
             else:
                 return 'DN'
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
+        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
+        # puisque la documentation est déjà ci-haut, dans la classe mère.
+        return abs(ord(position_source[0]) - ord(position_cible[0])) == abs(int(position_source[1]) - int(position_cible[1])) or \
+                abs(ord(position_source[0]) - ord(position_cible[0])) == 0 or abs(int(position_source[1]) - int(position_cible[1])) == 0

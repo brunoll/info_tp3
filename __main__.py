@@ -6,6 +6,7 @@ from pychecs.partie import Partie
 
 if __name__ == '__main__':
     # Création d'une instance de Partie.
+
     p = Partie()
 
     # Exemple de modification du dictionnaire de pièces, afin de débuter une partie simplifiée pour faire

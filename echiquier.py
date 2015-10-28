@@ -37,8 +37,10 @@ class Echiquier:
             bool: True si la position est valide, False autrement.
 
         """
-        # TODO: À compléter.
-        return False
+        if position[0] in self.lettres_colonnes and position[1] in self.chiffres_rangees:
+            return True
+        else:
+            return False
 
     def recuperer_piece_a_position(self, position):
         """Retourne la pièce qui est située à une position particulière, reçue en argument. Si aucune pièce n'est
@@ -51,8 +53,7 @@ class Echiquier:
             Piece or None: Une instance de type Piece si une pièce était située à cet endroit, et None autrement.
 
         """
-        # TODO: À compléter.
-        return None
+        return self.dictionnaire_pieces[position]
 
     def couleur_piece_a_position(self, position):
         """Retourne la couleur de la pièce située à la position reçue en argument, et une chaîne vide si aucune
@@ -65,8 +66,10 @@ class Echiquier:
             str: La couleur de la pièce s'il y en a une, et '' autrement.
 
         """
-        # TODO: À compléter.
-        return ""
+        if self.dictionnaire_pieces[position]:
+            return self.dictionnaire_pieces[position].couleur
+        else:
+            return ''
 
     def rangees_entre(self, rangee_debut, rangee_fin):
         """Retourne la liste des rangées qui sont situées entre les deux rangées reçues en argument, exclusivement.
@@ -93,8 +96,11 @@ class Echiquier:
             list: Une liste des rangées (en str) entre le début et la fin, dans le bon ordre.
 
         """
-        # TODO: À compléter.
-        return []
+        if rangee_debut not in self.chiffres_rangees and rangee_fin not in self.chiffres_rangees:
+            return []
+
+        step = int((rangee_fin-rangee_debut)/abs(rangee_fin-rangee_debut))
+        return list(range(rangee_debut+1, rangee_fin, step))
 
     def colonnes_entre(self, colonne_debut, colonne_fin):
         """Retourne la liste des colonnes qui sont situées entre les deux colonnes reçues en argument, exclusivement.
@@ -121,8 +127,14 @@ class Echiquier:
             list: Une liste des colonnes (en str) entre le début et la fin, dans le bon ordre.
 
         """
-        # TODO: À compléter.
-        return []
+        if colonne_debut not in self.lettres_colonnes and colonne_fin not in self.lettres_colonnes:
+            return []
+
+        liste = []
+        step = int((ord(colonne_fin)-ord(colonne_debut))/abs(ord(colonne_fin)-ord(colonne_debut)))
+        for i in range(ord(colonne_debut) +1, ord(colonne_fin), step):
+            liste += [chr(i)]
+        return liste
 
     def chemin_libre_entre_positions(self, position_source, position_cible):
         """Vérifie si la voie est libre entre deux positions, reçues en argument. Cette méthode sera pratique
@@ -149,7 +161,28 @@ class Echiquier:
                 ne permettaient pas la vérification).
 
         """
-        # TODO: À compléter.
+        rangeX = ord(position_cible[0]) - ord(position_source[0])
+        rangeY = int(position_cible[1]) - int(position_source[1])
+
+        if rangeX == 0:
+            for i in range(1,abs(rangeY)):
+                position = position_source[0] + str(int(int(position_source[1])+i*rangeY/abs(rangeY)))
+                if position in self.dictionnaire_pieces.keys():
+                    return False
+        elif rangeY == 0:
+            for i in range(1,abs(rangeX)):
+                position = chr(int(ord(position_source[0])+i*rangeX/abs(rangeX))) + position_source[1]
+                if position in self.dictionnaire_pieces.keys():
+                    return False
+        elif abs(rangeX) == abs(rangeY):
+            for i in range(1,abs(rangeY)):
+                position = chr(int(ord(position_source[0])+i*rangeX/abs(rangeX))) + \
+                           str(int(int(position_source[1])+i*rangeY/abs(rangeY)))
+                if position in self.dictionnaire_pieces.keys():
+                    return False
+        else:
+            return False
+
         return True
 
     def deplacement_est_valide(self, position_source, position_cible):
@@ -171,8 +204,23 @@ class Echiquier:
             bool: True si le déplacement est valide, et False autrement.
 
         """
-        # TODO: À compléter.
-        return True
+        if position_source not in self.dictionnaire_pieces.keys() or not self.position_est_valide(position_cible):
+            return False, "Il n'y a pas de pièce à cette position"
+
+        piece = self.recuperer_piece_a_position(position_source)
+        if not piece.peut_sauter:
+            if not self.chemin_libre_entre_positions(position_source, position_cible):
+                return False, "La pièce n'a pas accès à cette case"
+        if position_cible in self.dictionnaire_pieces.keys():
+            piece_cible = self.recuperer_piece_a_position(position_cible)
+            if piece.couleur == piece_cible.couleur:
+                return False, "Vous ne pouvez attaquer vos propres pièces"
+            if not piece.peut_faire_une_prise_vers(position_source, position_cible):
+                print("F5")
+                return False, "La pièce ne peut attaquer cette position"
+        elif not piece.peut_se_deplacer_vers(position_source, position_cible):
+            return False, "La pièce ne peut aller à cette position"
+        return True, ""
 
     def deplacer(self, position_source, position_cible):
         """Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
@@ -187,8 +235,13 @@ class Echiquier:
             bool: True si le déplacement était valide et a été effectué, et False autrement.
 
         """
-        # TODO: À compléter.
-        return True
+        deplacement, erreur = self.deplacement_est_valide(position_source, position_cible)
+        if deplacement:
+            self.dictionnaire_pieces[position_cible] = self.recuperer_piece_a_position(position_source)
+            del(self.dictionnaire_pieces[position_source])
+            return True, ""
+        else:
+            return False, erreur
 
     def roi_de_couleur_est_dans_echiquier(self, couleur):
         """Vérifie si un roi de la couleur reçue en argument est présent dans l'échiquier.
@@ -200,8 +253,10 @@ class Echiquier:
             bool: True si un roi de cette couleur est dans l'échiquier, et False autrement.
 
         """
-        # TODO: À compléter.
-        return True
+        for piece in self.dictionnaire_pieces.values():
+            if isinstance(piece, Roi) and piece.couleur == couleur:
+                return True
+        return False
 
     def initialiser_echiquier_depart(self):
         """Initialise l'échiquier à son contenu initial. Pour faire vos tests pendant le développement,
