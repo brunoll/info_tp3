@@ -99,8 +99,8 @@ class Echiquier:
         if rangee_debut not in self.chiffres_rangees and rangee_fin not in self.chiffres_rangees:
             return []
 
-        step = int((rangee_fin-rangee_debut)/abs(rangee_fin-rangee_debut))
-        return list(range(rangee_debut+1, rangee_fin, step))
+        step = int((int(rangee_fin)-int(rangee_debut))/abs(int(rangee_fin)-int(rangee_debut)))
+        return list(range(int(rangee_debut)+1, int(rangee_fin), step))
 
     def colonnes_entre(self, colonne_debut, colonne_fin):
         """Retourne la liste des colonnes qui sont situées entre les deux colonnes reçues en argument, exclusivement.
@@ -164,14 +164,16 @@ class Echiquier:
         rangeX = ord(position_cible[0]) - ord(position_source[0])
         rangeY = int(position_cible[1]) - int(position_source[1])
 
-        if rangeX == 0:
-            for i in range(1,abs(rangeY)):
-                position = position_source[0] + str(int(int(position_source[1])+i*rangeY/abs(rangeY)))
+        if position_source[0] == position_cible[0]:
+            rangees = self.rangees_entre(position_source[1],position_cible[1])
+            for r in rangees:
+                position = position_source[0] + str(r)
                 if position in self.dictionnaire_pieces.keys():
                     return False
-        elif rangeY == 0:
-            for i in range(1,abs(rangeX)):
-                position = chr(int(ord(position_source[0])+i*rangeX/abs(rangeX))) + position_source[1]
+        elif position_source[1] == position_cible[1]:
+            rangees = self.rangees_entre(position_source[0],position_cible[0])
+            for r in rangees:
+                position = r + position_source[1]
                 if position in self.dictionnaire_pieces.keys():
                     return False
         elif abs(rangeX) == abs(rangeY):
