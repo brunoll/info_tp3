@@ -59,9 +59,7 @@ class Partie:
         """
         while True:
             piece_position = input("Quelle pièce voulez-vous déplacer?")
-            if self.echiquier.position_est_valide(piece_position) and \
-                            piece_position in self.echiquier.dictionnaire_pieces and\
-                            self.echiquier.couleur_piece_a_position(piece_position) == self.joueur_actif:
+            if self.echiquier.couleur_piece_a_position(piece_position) == self.joueur_actif:
                 position_cible = input("Vers où?")
                 break
             else:

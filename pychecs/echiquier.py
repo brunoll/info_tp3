@@ -69,9 +69,9 @@ class Echiquier:
             str: La couleur de la pièce s'il y en a une, et '' autrement.
 
         """
-        if self.dictionnaire_pieces[position]:
+        try:
             return self.dictionnaire_pieces[position].couleur
-        else:
+        except:
             return ''
 
     def rangees_entre(self, rangee_debut, rangee_fin):
