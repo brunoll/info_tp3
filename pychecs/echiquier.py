@@ -140,14 +140,24 @@ class Echiquier:
             list: Une liste des colonnes (en str) entre le début et la fin, dans le bon ordre.
 
         """
-        if colonne_debut not in self.lettres_colonnes and colonne_fin not in self.lettres_colonnes:
-            return []
+        assert colonne_debut in self.lettres_colonnes and colonne_fin in self.lettres_colonnes, "Index de rangée invalide"
+        position_debut = 0
+        position_fin = 0
+        colonne_entre = []
+        for i, r in enumerate(self.lettres_colonnes):
+            if r == colonne_debut:
+                position_debut = i
+            if r == colonne_fin:
+                position_fin = i
 
-        liste = []
-        step = int((ord(colonne_fin)-ord(colonne_debut))/abs(ord(colonne_fin)-ord(colonne_debut)))
-        for i in range(ord(colonne_debut) +1, ord(colonne_fin), step):
-            liste += [chr(i)]
-        return liste
+        if position_debut < position_fin:
+            for index in range(position_debut + 1, position_fin):
+                colonne_entre += [self.lettres_colonnes[index]]
+        elif position_debut > position_fin:
+            for index in range(position_fin + 1, position_debut):
+                colonne_entre += [self.lettres_colonnes[index]]
+
+        return colonne_entre
 
     def chemin_libre_entre_positions(self, position_source, position_cible):
         """Vérifie si la voie est libre entre deux positions, reçues en argument. Cette méthode sera pratique
@@ -184,7 +194,7 @@ class Echiquier:
                 if position in self.dictionnaire_pieces.keys():
                     return False
         elif position_source[1] == position_cible[1]:
-            rangees = self.rangees_entre(position_source[0],position_cible[0])
+            rangees = self.colonnes_entre(position_source[0],position_cible[0])
             for r in rangees:
                 position = r + position_source[1]
                 if position in self.dictionnaire_pieces.keys():
