@@ -37,9 +37,12 @@ class Echiquier:
             bool: True si la position est valide, False autrement.
 
         """
-        if position[0] in self.lettres_colonnes and position[1] in self.chiffres_rangees:
-            return True
-        else:
+        try:
+            if position[0] in self.lettres_colonnes and position[1] in self.chiffres_rangees:
+                return True
+            else:
+                return False
+        except:
             return False
 
     def recuperer_piece_a_position(self, position):
