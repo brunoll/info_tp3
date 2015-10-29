@@ -243,8 +243,23 @@ class Echiquier:
             if piece.couleur == piece_cible.couleur:
                 return False, "Vous ne pouvez attaquer vos propres pièces"
             if not piece.peut_faire_une_prise_vers(position_source, position_cible):
-                print("F5")
                 return False, "La pièce ne peut attaquer cette position"
+        elif isinstance(piece, Pion):
+            position_attaque = position_source[0]+str(int(position_source[1])+1)
+            if piece.couleur == "blanc" and position_attaque in self.dictionnaire_pieces.keys():
+                piece_cible = self.recuperer_piece_a_position(position_attaque)
+                if piece.couleur == piece_cible.couleur:
+                    return False, "Vous ne pouvez attaquer vos propres pièces"
+                if not piece.peut_faire_une_prise_vers(position_source, position_cible):
+                    return False, "La pièce ne peut attaquer cette position"
+            else:
+                position_attaque = position_source[0]+str(int(position_source[1])-1)
+                if piece.couleur == "noir" and position_attaque in self.dictionnaire_pieces.keys():
+                    piece_cible = self.recuperer_piece_a_position(position_attaque)
+                    if piece.couleur == piece_cible.couleur:
+                        return False, "Vous ne pouvez attaquer vos propres pièces"
+                    if not piece.peut_faire_une_prise_vers(position_source, position_cible):
+                        return False, "La pièce ne peut attaquer cette position"
         elif not piece.peut_se_deplacer_vers(position_source, position_cible):
             return False, "La pièce ne peut aller à cette position"
         return True, ""
