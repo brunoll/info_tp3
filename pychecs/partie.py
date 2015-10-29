@@ -33,9 +33,9 @@ class Partie:
 
         """
         if not self.echiquier.roi_de_couleur_est_dans_echiquier('noir'):
-            return 'noir'
-        if not self.echiquier.roi_de_couleur_est_dans_echiquier('blanc'):
             return 'blanc'
+        if not self.echiquier.roi_de_couleur_est_dans_echiquier('blanc'):
+            return 'noir'
         return 'aucun'
 
     def partie_terminee(self):
@@ -45,8 +45,8 @@ class Partie:
             bool: True si la partie est terminée, et False autrement.
 
         """
-        # TODO: À compléter.
-        return False
+
+        return self.determiner_gagnant() != 'aucun'
 
     def demander_positions(self):
         """Demande à l'utilisateur d'entrer les positions de départ et d'arrivée pour faire un déplacement. Si les
@@ -98,4 +98,5 @@ class Partie:
             else:
                 print(erreur)
 
+        print("Partie terminée. Le gagnant est \"", self.determiner_gagnant(), "\"")
         pass
