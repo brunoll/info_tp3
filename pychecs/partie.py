@@ -98,5 +98,5 @@ class Partie:
             else:
                 print(erreur)
 
-        print("Partie terminée. Le gagnant est \"", self.determiner_gagnant(), "\"")
+        print("Partie terminée. Le gagnant est \"", self.determiner_gagnant(), "\". Félicitations!")
         pass
