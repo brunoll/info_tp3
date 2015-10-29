@@ -238,28 +238,6 @@ class Echiquier:
         if not piece.peut_sauter:
             if not self.chemin_libre_entre_positions(position_source, position_cible):
                 return False, "La pièce n'a pas accès à cette case"
-        if position_cible in self.dictionnaire_pieces.keys():
-            piece_cible = self.recuperer_piece_a_position(position_cible)
-            if piece.couleur == piece_cible.couleur:
-                return False, "Vous ne pouvez attaquer vos propres pièces"
-            if not piece.peut_faire_une_prise_vers(position_source, position_cible):
-                return False, "La pièce ne peut attaquer cette position"
-        elif isinstance(piece, Pion):
-            position_attaque = position_source[0]+str(int(position_source[1])+1)
-            if piece.couleur == "blanc" and position_attaque in self.dictionnaire_pieces.keys():
-                piece_cible = self.recuperer_piece_a_position(position_attaque)
-                if piece.couleur == piece_cible.couleur:
-                    return False, "Vous ne pouvez attaquer vos propres pièces"
-                if not piece.peut_faire_une_prise_vers(position_source, position_cible):
-                    return False, "La pièce ne peut attaquer cette position"
-            else:
-                position_attaque = position_source[0]+str(int(position_source[1])-1)
-                if piece.couleur == "noir" and position_attaque in self.dictionnaire_pieces.keys():
-                    piece_cible = self.recuperer_piece_a_position(position_attaque)
-                    if piece.couleur == piece_cible.couleur:
-                        return False, "Vous ne pouvez attaquer vos propres pièces"
-                    if not piece.peut_faire_une_prise_vers(position_source, position_cible):
-                        return False, "La pièce ne peut attaquer cette position"
         elif not piece.peut_se_deplacer_vers(position_source, position_cible):
             return False, "La pièce ne peut aller à cette position"
         return True, ""
@@ -278,9 +256,36 @@ class Echiquier:
 
         """
         deplacement, erreur = self.deplacement_est_valide(position_source, position_cible)
+        piece = self.recuperer_piece_a_position(position_source)
         if deplacement:
+            if position_cible in self.dictionnaire_pieces.keys():
+                piece_cible = self.recuperer_piece_a_position(position_cible)
+                if piece.couleur == piece_cible.couleur:
+                    return False, "Vous ne pouvez attaquer vos propres pièces"
+                if not piece.peut_faire_une_prise_vers(position_source, position_cible):
+                    return False, "La pièce ne peut attaquer cette position"
+                del(self.dictionnaire_pieces[position_cible])
+            elif isinstance(piece, Pion):
+                position_attaque = position_source[0]+str(int(position_source[1])+1)
+                if piece.couleur == "blanc" and position_attaque in self.dictionnaire_pieces.keys():
+                    piece_cible = self.recuperer_piece_a_position(position_attaque)
+                    if piece.couleur == piece_cible.couleur:
+                        return False, "Vous ne pouvez attaquer vos propres pièces"
+                    if not piece.peut_faire_une_prise_vers(position_source, position_cible):
+                        return False, "La pièce ne peut attaquer cette position"
+                    del(self.dictionnaire_pieces[position_attaque])
+                else:
+                    position_attaque = position_source[0]+str(int(position_source[1])-1)
+                    if piece.couleur == "noir" and position_attaque in self.dictionnaire_pieces.keys():
+                        piece_cible = self.recuperer_piece_a_position(position_attaque)
+                        if piece.couleur == piece_cible.couleur:
+                            return False, "Vous ne pouvez attaquer vos propres pièces"
+                        if not piece.peut_faire_une_prise_vers(position_source, position_cible):
+                            return False, "La pièce ne peut attaquer cette position"
+                        del(self.dictionnaire_pieces[position_attaque])
             self.dictionnaire_pieces[position_cible] = self.recuperer_piece_a_position(position_source)
             del(self.dictionnaire_pieces[position_source])
+
             return True, ""
         else:
             return False, erreur
