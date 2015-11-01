@@ -42,7 +42,7 @@ class Echiquier:
                 return True
             else:
                 return False
-        except:
+        except ValueError:
             return False
 
     def recuperer_piece_a_position(self, position):
@@ -71,7 +71,7 @@ class Echiquier:
         """
         try:
             return self.dictionnaire_pieces[position].couleur
-        except:
+        except ValueError:
             return ''
 
     def rangees_entre(self, rangee_debut, rangee_fin):
@@ -156,7 +156,7 @@ class Echiquier:
             for index in range(position_debut + 1, position_fin):
                 colonne_entre += [self.lettres_colonnes[index]]
         elif position_debut > position_fin:
-            for index in range(position_debut -1, position_fin, -1):
+            for index in range(position_debut - 1, position_fin, -1):
                 colonne_entre += [self.lettres_colonnes[index]]
 
         return colonne_entre
@@ -186,25 +186,25 @@ class Echiquier:
                 ne permettaient pas la vérification).
 
         """
-        rangeX = ord(position_cible[0]) - ord(position_source[0])
-        rangeY = int(position_cible[1]) - int(position_source[1])
+        range_x = ord(position_cible[0]) - ord(position_source[0])
+        range_y = int(position_cible[1]) - int(position_source[1])
 
         if position_source[0] == position_cible[0]:
-            rangees = self.rangees_entre(position_source[1],position_cible[1])
+            rangees = self.rangees_entre(position_source[1], position_cible[1])
             for r in rangees:
                 position = position_source[0] + r
                 if position in self.dictionnaire_pieces.keys():
                     return False
         elif position_source[1] == position_cible[1]:
-            rangees = self.colonnes_entre(position_source[0],position_cible[0])
+            rangees = self.colonnes_entre(position_source[0], position_cible[0])
             for r in rangees:
                 position = r + position_source[1]
                 if position in self.dictionnaire_pieces.keys():
                     return False
-        elif abs(rangeX) == abs(rangeY):
-            for i in range(1,abs(rangeY)):
-                position = chr(int(ord(position_source[0])+i*rangeX/abs(rangeX))) + \
-                           str(int(int(position_source[1])+i*rangeY/abs(rangeY)))
+        elif abs(range_x) == abs(range_y):
+            for i in range(1, abs(range_y)):
+                position = chr(int(ord(position_source[0])+i*range_x/abs(range_x))) + \
+                           str(int(int(position_source[1])+i*range_y/abs(range_y)))
                 if position in self.dictionnaire_pieces.keys():
                     return False
         else:
@@ -262,7 +262,6 @@ class Echiquier:
 
         """
         deplacement, erreur = self.deplacement_est_valide(position_source, position_cible)
-        piece = self.recuperer_piece_a_position(position_source)
         if deplacement:
             if position_cible in self.dictionnaire_pieces.keys():
                 del(self.dictionnaire_pieces[position_cible])
@@ -383,7 +382,7 @@ class Echiquier:
 
 
 if __name__ == '__main__':
-    # Exemple de __main__ qui crée un nouvel échiquier, puis l'affiche à l'éran. Vous pouvez ajouter des instructions ici
+    # Exemple de __main__ qui crée un nouvel échiquier, puis l'affiche à l'écran. Vous pouvez ajouter des instructions ici
     # pour tester votre échiquier, mais n'oubliez pas que le programme principal est démarré en exécutant __main__.py.
     echiquier = Echiquier()
     print(echiquier)

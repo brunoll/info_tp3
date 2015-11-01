@@ -95,13 +95,27 @@ class Piece:
 
 
 class Pion(Piece):
+    """Le pion se déplace d’une case à la fois vers l’avant, c’est à dire vers le haut de l’échiquier
+    pour les pièces blanches, et vers le bas de l’échiquier pour les pièces noires. Lorsque le
+    pion est à sa position initiale, il peut avancer de 2 cases vers l’avant plutôt qu’une.
+
+    Le pion est la seule pièce du jeu d’échecs qui fait ses prises (action de « manger » une pièce
+    ennemi) de manière différente que son mouvement standard : le pion fait une prise en
+    diagonale, encore une fois vers l’avant seulement.
+
+    Un pion ne peut pas sauter par dessus une autre pièce.
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
 
     def peut_se_deplacer_vers(self, position_source, position_cible):
-        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
-        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
-        # puisque la documentation est déjà ci-haut, dans la classe mère.
         if position_source[0] == position_cible[0]:
             if self.couleur == 'noir':
                 if position_source[1] == '7':
@@ -124,7 +138,6 @@ class Pion(Piece):
         else:
             return abs(ord(position_source[0]) - ord(position_cible[0])) == 1 and int(position_cible[1]) == int(position_source[1]) + 1
 
-
     def __repr__(self):
         """Redéfinit comment on affiche un pion à l'écran. Nous utilisons la constante UTILISER_UNICODE
         pour déterminer comment afficher le pion.
@@ -146,6 +159,17 @@ class Pion(Piece):
 
 
 class Tour(Piece):
+    """La tour se déplace (et fait ses prises) en se déplaçant le long des rangées et des colonnes,
+    d’un nombre quelconque de positions. Une tour ne peut pas sauter par dessus une autre
+    pièce.
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
 
@@ -160,13 +184,23 @@ class Tour(Piece):
                 return '\u265c'
             else:
                 return 'TN'
+
     def peut_se_deplacer_vers(self, position_source, position_cible):
-        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
-        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
-        # puisque la documentation est déjà ci-haut, dans la classe mère.
         return abs(ord(position_source[0]) - ord(position_cible[0])) == 0 or abs(ord(position_source[1]) - ord(position_cible[1])) == 0
 
+
 class Cavalier(Piece):
+    """Le cavalier se déplace en forme de « L », c’est à dire d’une rangée puis de deux colonnes, ou
+    bien de deux rangées puis d’une colonne. Le cavalier peut sauter par dessus des pièces,
+    tant qu’il termine son mouvement sur une case libre (ou avec une pièce de couleur adverse).
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, True)
 
@@ -181,15 +215,23 @@ class Cavalier(Piece):
                 return '\u265e'
             else:
                 return 'CN'
+
     def peut_se_deplacer_vers(self, position_source, position_cible):
-        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
-        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
-        # puisque la documentation est déjà ci-haut, dans la classe mère.
         return (abs(ord(position_cible[0])-ord(position_source[0])) == 2 and abs(int(position_cible[1])-int(position_source[1])) == 1) or\
                (abs(ord(position_cible[0])-ord(position_source[0])) == 1 and abs(int(position_cible[1])-int(position_source[1])) == 2)
 
 
 class Fou(Piece):
+    """Le fou se déplace (et fait ses prises) en se déplaçant en diagonale, d’un nombre quelconque
+    de positions. Un fou ne peut pas sauter par dessus une autre pièce.
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
 
@@ -204,14 +246,23 @@ class Fou(Piece):
                 return '\u265d'
             else:
                 return 'FN'
+
     def peut_se_deplacer_vers(self, position_source, position_cible):
-        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
-        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
-        # puisque la documentation est déjà ci-haut, dans la classe mère.
         return abs(ord(position_source[0]) - ord(position_cible[0])) == abs(int(position_source[1]) - int(position_cible[1]))
 
 
 class Roi(Piece):
+    """Le roi est la pièce la plus importante du jeu : perdre son roi signifie que nous avons perdu
+    la partie. Le roi se déplace (et fait ses prises) d’une seule case à la fois, dans n’importe
+    quelle direction (rangée, colonne ou diagonale)
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
 
@@ -226,14 +277,23 @@ class Roi(Piece):
                 return '\u265a'
             else:
                 return 'RN'
+
     def peut_se_deplacer_vers(self, position_source, position_cible):
-        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
-        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
-        # puisque la documentation est déjà ci-haut, dans la classe mère.
         return abs(ord(position_cible[0])-ord(position_source[0])) <= 1 and abs(int(position_cible[1])-int(position_source[1])) <= 1
 
 
 class Dame(Piece):
+    """La dame combine les mouvements de la tour et du fou : elle se déplace et fait ses prises
+    soit le long d’une rangée ou d’une colonne, ou bien en diagonale. Elle ne peut pas sauter
+    par dessus une pièce adverse.
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
 
@@ -248,9 +308,7 @@ class Dame(Piece):
                 return '\u265b'
             else:
                 return 'DN'
+
     def peut_se_deplacer_vers(self, position_source, position_cible):
-        # TODO: À compléter, pour définir comment un pion se déplace. Vous devez implémenter cette méthode
-        # pour chacune des autres classes filles, ci-bas. Nous ne vous demandons pas de documenter ces méthodes,
-        # puisque la documentation est déjà ci-haut, dans la classe mère.
         return abs(ord(position_source[0]) - ord(position_cible[0])) == abs(int(position_source[1]) - int(position_cible[1])) or \
                 abs(ord(position_source[0]) - ord(position_cible[0])) == 0 or abs(int(position_source[1]) - int(position_cible[1])) == 0
