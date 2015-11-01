@@ -42,7 +42,7 @@ class Echiquier:
                 return True
             else:
                 return False
-        except ValueError:
+        except:
             return False
 
     def recuperer_piece_a_position(self, position):
@@ -71,7 +71,7 @@ class Echiquier:
         """
         try:
             return self.dictionnaire_pieces[position].couleur
-        except ValueError:
+        except:
             return ''
 
     def rangees_entre(self, rangee_debut, rangee_fin):
