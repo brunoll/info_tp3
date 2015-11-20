@@ -3,7 +3,7 @@
 dont un objet échiquier (une instance de la classe Echiquier).
 
 """
-from pychecs.echiquier import Echiquier
+from pychecs2.echecs.echiquier import Echiquier
 
 
 class Partie:
@@ -34,8 +34,9 @@ class Partie:
         """
         if not self.echiquier.roi_de_couleur_est_dans_echiquier('noir'):
             return 'blanc'
-        if not self.echiquier.roi_de_couleur_est_dans_echiquier('blanc'):
+        elif not self.echiquier.roi_de_couleur_est_dans_echiquier('blanc'):
             return 'noir'
+
         return 'aucun'
 
     def partie_terminee(self):
@@ -45,7 +46,6 @@ class Partie:
             bool: True si la partie est terminée, et False autrement.
 
         """
-
         return self.determiner_gagnant() != 'aucun'
 
     def demander_positions(self):
@@ -58,24 +58,29 @@ class Partie:
 
         """
         while True:
-            piece_position = input("Quelle pièce voulez-vous déplacer?")
-            if self.echiquier.couleur_piece_a_position(piece_position) == self.joueur_actif:
-                position_cible = input("Vers où?")
-                break
-            else:
-                print("Vous n'avez pas de pièces à cette position")
-        return piece_position, position_cible
+            # On demande et valide la position source.
+            while True:
+                source = input("Entrez position source: ")
+                if self.echiquier.position_est_valide(source) and self.echiquier.couleur_piece_a_position(source) == self.joueur_actif:
+                    break
+
+                print("Position invalide.\n")
+
+            # On demande et valide la position cible.
+            cible = input("Entrez position cible: ")
+            if self.echiquier.deplacement_est_valide(source, cible):
+                return source, cible
+
+            print("Déplacement invalide.\n")
 
     def joueur_suivant(self):
         """Change le joueur actif: passe de blanc à noir, ou de noir à blanc, selon la couleur du joueur actif.
 
         """
-        if self.joueur_actif == "blanc":
-            self.joueur_actif = "noir"
+        if self.joueur_actif == 'blanc':
+            self.joueur_actif = 'noir'
         else:
-            self.joueur_actif = "blanc"
-
-        pass
+            self.joueur_actif = 'blanc'
 
     def jouer(self):
         """Tant que la partie n'est pas terminée, joue la partie. À chaque tour :
@@ -87,16 +92,12 @@ class Partie:
         Une fois la partie terminée, on félicite le joueur gagnant!
 
         """
-        print(self.echiquier)
         while not self.partie_terminee():
-            print("C'est au tour des", self.joueur_actif)
-            position_piece, position_cible = self.demander_positions()
-            deplacement, erreur = self.echiquier.deplacer(position_piece, position_cible)
-            if deplacement:
-                self.joueur_suivant()
-                print(self.echiquier)
-            else:
-                print(erreur)
+            print(self.echiquier)
+            print("\nAu tour du joueur {}".format(self.joueur_actif))
+            source, cible = self.demander_positions()
+            self.echiquier.deplacer(source, cible)
+            self.joueur_suivant()
 
-        print("Partie terminée. Le gagnant est \"", self.determiner_gagnant(), "\". Félicitations!")
-        pass
+        print(self.echiquier)
+        print("\nPartie terminée! Le joueur {} a gagné".format(self.determiner_gagnant()))

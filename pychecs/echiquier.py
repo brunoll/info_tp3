@@ -56,8 +56,10 @@ class Echiquier:
             Piece or None: Une instance de type Piece si une pièce était située à cet endroit, et None autrement.
 
         """
-        return self.dictionnaire_pieces[position]
-
+        try:
+            return self.dictionnaire_pieces[position]
+        except:
+            return None
     def couleur_piece_a_position(self, position):
         """Retourne la couleur de la pièce située à la position reçue en argument, et une chaîne vide si aucune
         pièce n'est à cet endroit.
@@ -100,6 +102,7 @@ class Echiquier:
 
         """
         assert rangee_debut in self.chiffres_rangees and rangee_fin in self.chiffres_rangees, "Index de rangée invalide"
+
         position_debut = 0
         position_fin = 0
         rangees_entre = []
@@ -386,4 +389,4 @@ if __name__ == '__main__':
     # Exemple de __main__ qui crée un nouvel échiquier, puis l'affiche à l'éran. Vous pouvez ajouter des instructions ici
     # pour tester votre échiquier, mais n'oubliez pas que le programme principal est démarré en exécutant __main__.py.
     echiquier = Echiquier()
-    print(echiquier)
+    print(echiquier.recuperer_piece_a_position('y6'))
