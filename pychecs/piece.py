@@ -95,49 +95,48 @@ class Piece:
 
 
 class Pion(Piece):
+    """Le pion se déplace d’une case à la fois vers l’avant, c’est à dire vers le haut de l’échiquier
+    pour les pièces blanches, et vers le bas de l’échiquier pour les pièces noires. Lorsque le
+    pion est à sa position initiale, il peut avancer de 2 cases vers l’avant plutôt qu’une.
+
+    Le pion est la seule pièce du jeu d’échecs qui fait ses prises (action de « manger » une pièce
+    ennemi) de manière différente que son mouvement standard : le pion fait une prise en
+    diagonale, encore une fois vers l’avant seulement.
+
+    Un pion ne peut pas sauter par dessus une autre pièce.
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
 
     def peut_se_deplacer_vers(self, position_source, position_cible):
-        colonne_source, colonne_cible = ord(position_source[0]), ord(position_cible[0])
-        rangee_source, rangee_cible = int(position_source[1]), int(position_cible[1])
-
-        # Un pion se déplace sur une même colonne.
-        if colonne_cible != colonne_source:
-            return False
-
-        # Si le pion n'a jamais bougé, il peut bouger de deux cases. Sinon, seulement d'une case.
-        # Notez que c'est ici le seul endroit où nous faisons référence à la taille de l'échiquier.
-        # Pour rendre nos classes de pièces vraiment indépendantes de cette taille, nous pourrions
-        # par exemple ajouter un attribut n_deplacements, qui sera incrémenté si la pièce se
-        # déplace.
-        difference = rangee_source - rangee_cible
-        if self.est_blanc():
-            if rangee_source == 2:
-                return difference in (-1, -2)
+        if position_source[0] == position_cible[0]:
+            if self.couleur == 'noir':
+                if position_source[1] == '7':
+                    if int(position_cible[1]) == 5 or int(position_cible[1]) == 6:
+                        return True
+                elif int(position_cible[1]) == int(position_source[1]) - 1:
+                        return True
             else:
-                return difference == -1
+                if position_source[1] == '2':
+                    if int(position_cible[1]) == 3 or int(position_cible[1]) == 4:
+                        return True
+                elif int(position_cible[1]) == int(position_source[1]) + 1:
+                        return True
 
-        else:
-            if rangee_source == 7:
-                return difference in (1, 2)
-            else:
-                return difference == 1
+        return False
 
     def peut_faire_une_prise_vers(self, position_source, position_cible):
-        colonne_source, colonne_cible = ord(position_source[0]), ord(position_cible[0])
-        rangee_source, rangee_cible = int(position_source[1]), int(position_cible[1])
-
-        # Le pion fait une prise en diagonale, d'une case seulement, et la direction dépend
-        # de sa couleur.
-        if colonne_cible not in (colonne_source - 1, colonne_source + 1):
-            return False
-
-        if self.est_blanc():
-            return rangee_cible == rangee_source + 1
-
+        if self.couleur == 'noir':
+            return abs(ord(position_source[0]) - ord(position_cible[0])) == 1 and int(position_cible[1]) == int(position_source[1]) - 1
         else:
-            return rangee_cible == rangee_source - 1
+            return abs(ord(position_source[0]) - ord(position_cible[0])) == 1 and int(position_cible[1]) == int(position_source[1]) + 1
 
     def __repr__(self):
         """Redéfinit comment on affiche un pion à l'écran. Nous utilisons la constante UTILISER_UNICODE
@@ -160,22 +159,19 @@ class Pion(Piece):
 
 
 class Tour(Piece):
+    """La tour se déplace (et fait ses prises) en se déplaçant le long des rangées et des colonnes,
+    d’un nombre quelconque de positions. Une tour ne peut pas sauter par dessus une autre
+    pièce.
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
-
-    def peut_se_deplacer_vers(self, position_source, position_cible):
-        colonne_source, colonne_cible = position_source[0], position_cible[0]
-        rangee_source, rangee_cible = position_source[1], position_cible[1]
-
-        # Une tour se déplace sur une même rangée ou une même ligne, peu importe la direction.
-        if colonne_cible != colonne_source and rangee_source != rangee_cible:
-            return False
-
-        # Par contre, elle ne peut pas rester sur place.
-        if colonne_source == colonne_cible and rangee_source == rangee_cible:
-            return False
-
-        return True
 
     def __repr__(self):
         if self.est_blanc():
@@ -189,26 +185,24 @@ class Tour(Piece):
             else:
                 return 'TN'
 
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        return abs(ord(position_source[0]) - ord(position_cible[0])) == 0 or abs(ord(position_source[1]) - ord(position_cible[1])) == 0
+
 
 class Cavalier(Piece):
+    """Le cavalier se déplace en forme de « L », c’est à dire d’une rangée puis de deux colonnes, ou
+    bien de deux rangées puis d’une colonne. Le cavalier peut sauter par dessus des pièces,
+    tant qu’il termine son mouvement sur une case libre (ou avec une pièce de couleur adverse).
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, True)
-
-    def peut_se_deplacer_vers(self, position_source, position_cible):
-        colonne_source, colonne_cible = ord(position_source[0]), ord(position_cible[0])
-        rangee_source, rangee_cible = int(position_source[1]), int(position_cible[1])
-
-        # Un cavalier se déplace en "L", alors l'une de ses coordonnées soit varier de 1, et l'autre de 2.
-        distance_colonne = abs(colonne_source - colonne_cible)
-        distance_rangee = abs(rangee_source - rangee_cible)
-
-        if distance_colonne == 1 and distance_rangee == 2:
-            return True
-
-        if distance_colonne == 2 and distance_rangee == 1:
-            return True
-
-        return False
 
     def __repr__(self):
         if self.est_blanc():
@@ -222,24 +216,24 @@ class Cavalier(Piece):
             else:
                 return 'CN'
 
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        return (abs(ord(position_cible[0])-ord(position_source[0])) == 2 and abs(int(position_cible[1])-int(position_source[1])) == 1) or\
+               (abs(ord(position_cible[0])-ord(position_source[0])) == 1 and abs(int(position_cible[1])-int(position_source[1])) == 2)
+
 
 class Fou(Piece):
+    """Le fou se déplace (et fait ses prises) en se déplaçant en diagonale, d’un nombre quelconque
+    de positions. Un fou ne peut pas sauter par dessus une autre pièce.
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
-
-    def peut_se_deplacer_vers(self, position_source, position_cible):
-        # Un fou se déplace en diagonale, c'est à dire, la distance entre les rangées et colonnes doit être la même.
-        colonne_source, colonne_cible = ord(position_source[0]), ord(position_cible[0])
-        rangee_source, rangee_cible = int(position_source[1]), int(position_cible[1])
-
-        if abs(colonne_source - colonne_cible) != abs(rangee_source - rangee_cible):
-            return False
-
-        # Par contre, il ne peut pas faire de sur-place.
-        if colonne_source == colonne_cible and rangee_source == rangee_cible:
-            return False
-
-        return True
 
     def __repr__(self):
         if self.est_blanc():
@@ -253,23 +247,24 @@ class Fou(Piece):
             else:
                 return 'FN'
 
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        return abs(ord(position_source[0]) - ord(position_cible[0])) == abs(int(position_source[1]) - int(position_cible[1]))
+
 
 class Roi(Piece):
+    """Le roi est la pièce la plus importante du jeu : perdre son roi signifie que nous avons perdu
+    la partie. Le roi se déplace (et fait ses prises) d’une seule case à la fois, dans n’importe
+    quelle direction (rangée, colonne ou diagonale)
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
-
-    def peut_se_deplacer_vers(self, position_source, position_cible):
-        # Un roi peut se déplacer d'une case, sur une ligne, rangée ou colonne.
-        colonne_source, colonne_cible = ord(position_source[0]), ord(position_cible[0])
-        rangee_source, rangee_cible = int(position_source[1]), int(position_cible[1])
-
-        distance_colonne = abs(colonne_source - colonne_cible)
-        distance_rangee = abs(rangee_source - rangee_cible)
-
-        if distance_rangee != 1 and distance_colonne != 1:
-            return False
-
-        return True
 
     def __repr__(self):
         if self.est_blanc():
@@ -283,18 +278,24 @@ class Roi(Piece):
             else:
                 return 'RN'
 
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        return abs(ord(position_cible[0])-ord(position_source[0])) <= 1 and abs(int(position_cible[1])-int(position_source[1])) <= 1
+
 
 class Dame(Piece):
+    """La dame combine les mouvements de la tour et du fou : elle se déplace et fait ses prises
+    soit le long d’une rangée ou d’une colonne, ou bien en diagonale. Elle ne peut pas sauter
+    par dessus une pièce adverse.
+
+    Attributes:
+        couleur (str): La couleur de la pièce, soit 'blanc' ou 'noir'.
+
+    Args:
+        couleur (str): La couleur avec laquelle créer la pièce.
+
+    """
     def __init__(self, couleur):
         super().__init__(couleur, False)
-
-    def peut_se_deplacer_vers(self, position_source, position_cible):
-        # Une mouvement pour une dame est valide si elle se déplace sur une rangée, colonne ou en diagonale.
-        # Notez que nous utilisons directement les méthodes à partir d'une classe, en passant comme premier
-        # argument l'objet courant (self). Il aurait été plus "propre" de se créer des nouvelles fonctions
-        # communes aux classes Tour, Fou et Dame pour éviter de faire ces appels à partir de la classe.
-        return Tour.peut_se_deplacer_vers(self, position_source, position_cible) or \
-            Fou.peut_se_deplacer_vers(self, position_source, position_cible)
 
     def __repr__(self):
         if self.est_blanc():
@@ -307,3 +308,7 @@ class Dame(Piece):
                 return '\u265b'
             else:
                 return 'DN'
+
+    def peut_se_deplacer_vers(self, position_source, position_cible):
+        return abs(ord(position_source[0]) - ord(position_cible[0])) == abs(int(position_source[1]) - int(position_cible[1])) or \
+                abs(ord(position_source[0]) - ord(position_cible[0])) == 0 or abs(int(position_source[1]) - int(position_cible[1])) == 0
